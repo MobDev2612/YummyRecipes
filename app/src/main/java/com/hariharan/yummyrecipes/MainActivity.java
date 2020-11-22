@@ -13,35 +13,18 @@ import com.mindorks.placeholderview.SwipePlaceHolderView;
 
 public class MainActivity extends AppCompatActivity {
 
-    SwipePlaceHolderView swipePlaceHolderView;
-
-    RecipeViewModel viewModel;
+    boolean showingCart = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        swipePlaceHolderView = findViewById(R.id.recipe_view);
-        viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(RecipeViewModel.class);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        swipePlaceHolderView.getBuilder()
-                .setDisplayViewCount(3)
-                .setSwipeDecor(new SwipeDecor()
-                        .setPaddingTop(20)
-                        .setRelativeScale(0.01f)
-                        .setSwipeInMsgLayoutId(R.layout.swipe_message_view_right)
-                        .setSwipeOutMsgLayoutId(R.layout.simple_message_view_left));
-
-        viewModel.getRecipeList().observe(this, recipeModels -> {
-            swipePlaceHolderView.removeAllViews();
-            for (RecipeModel recipeModel : recipeModels) {
-                swipePlaceHolderView.addView(new RecipeCard(recipeModel, MainActivity.this.getApplicationContext(), swipePlaceHolderView, new OnRecipeSelectedImpl()));
-            }
-        });
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new RecipeFragment()).commit();
     }
 
     @Override
@@ -51,21 +34,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if (!showingCart) {
+            super.onBackPressed();
+        } else {
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new RecipeFragment()).commit();
+            showingCart = false;
+        }
+
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        if (id == R.id.cart) {
+            showingCart = true;
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new CartFragment()).commit();
+        }
         return super.onOptionsItemSelected(item);
     }
 
-    private class OnRecipeSelectedImpl implements RecipeCard.OnRecipeSelected {
 
-        @Override
-        public void onAddedToCart(RecipeModel recipeName) {
-            viewModel.addRecipe(recipeName);
-        }
-
-        @Override
-        public void onMovedToLast(RecipeModel recipeModel) {
-            swipePlaceHolderView.addView(new RecipeCard(recipeModel, MainActivity.this.getApplicationContext(), swipePlaceHolderView, new OnRecipeSelectedImpl()));
-        }
-    }
 }
