@@ -22,10 +22,17 @@ public class RecipeViewModel extends AndroidViewModel {
 
     private List<RecipeModel> selectedRecipes;
 
+    private boolean descSort = false;
+
     public RecipeViewModel(@NonNull Application application) {
         super(application);
         recipeRepo = new RecipeRepo(application);
         recipeList = recipeRepo.getRecipeList();
+    }
+
+    public void setDescSort() {
+        descSort = !descSort;
+        recipeRepo.setDescSort(descSort);
     }
 
     public LiveData<List<RecipeModel>> getRecipeList() {

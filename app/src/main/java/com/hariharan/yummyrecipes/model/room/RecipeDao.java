@@ -29,6 +29,9 @@ public interface RecipeDao {
      *
      * @return list of recipes
      */
-    @Query("SELECT * FROM recipe_table ORDER BY id ASC")
+    @Query("SELECT * FROM recipe_table ORDER BY name ASC")
     LiveData<List<RecipeModel>> getRecipeList();
+
+    @Query("SELECT * FROM recipe_table ORDER BY name DESC")
+    LiveData<List<RecipeModel>> getRecipeListByDesc();
 }

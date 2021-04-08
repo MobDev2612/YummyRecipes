@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.cart) {
             showingCart = true;
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new CartFragment()).commit();
+        } else if(id == R.id.sort){
+            RecipeViewModel viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(RecipeViewModel.class);
+            viewModel.setDescSort();
         }
         return super.onOptionsItemSelected(item);
     }

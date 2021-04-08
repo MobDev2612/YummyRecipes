@@ -26,6 +26,9 @@ public class RecipeRepo {
 
     private LiveData<List<RecipeModel>> recipeList;
 
+    private boolean descSort = false;
+
+
     public RecipeRepo(Application application) {
         RecipeDatabase database = RecipeDatabase.getDatabase(application);
         recipeDao = database.getRecipeDao();
@@ -35,6 +38,16 @@ public class RecipeRepo {
 
     public LiveData<List<RecipeModel>> getRecipeList() {
         return recipeList;
+    }
+
+    public void setDescSort(boolean descSort) {
+        this.descSort = descSort;
+
+        if (descSort) {
+            recipeList = recipeDao.getRecipeListByDesc();
+        } else {
+            recipeList = recipeDao.getRecipeList();
+        }
     }
 
     /**
